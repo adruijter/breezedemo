@@ -28,7 +28,19 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $role = strtolower($request->user()->rolname ?? '');
+
+        // return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(match($role) {
+            'praktijkmanagement' => route('praktijkmanagement.index'),
+            'patient'         => route('patient.index'),
+            'Tandarts'    => route('tandarts.index'),
+            'mondhygienist'   => route('mondhygienist.index'),
+            'assistent'   => route('assistent.index'),
+            default        => route('welcome'),
+        });
+       
+        // route('dashboard', absolute: false));
     }
 
     /**
