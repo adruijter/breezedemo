@@ -11,24 +11,28 @@ composer require laravel/breeze --dev
 php artisan breeze:install blade
 php artisan migrate
 npm install
-npm run dev
+npm run build
+
+composer run dev
 
 
 bij register.blade.php toevoegen
 
 <div class="mt-4">
-            <x-input-label for="rolname" :value="__('rolname')" />
+    <x-input-label for="rolname" :value="__('rolname')" />
 
-            <x-text-input id="rolname" class="block mt-1 w-full"
-                            type="text"
-                            name="rolname" required autocomplete="rolname" />
+    <x-text-input id="rolname" class="block mt-1 w-full"
+                    type="text"
+                    name="rolname" required autocomplete="rolname" />
 
-            <x-input-error :messages="$errors->get('rolname')" class="mt-2" />
-        </div>
+    <x-input-error :messages="$errors->get('rolname')" class="mt-2" />
+</div>
 
 
 
 app\Http\Controllers\Auth\RegisteredUserController.php uitbreiden met:
+1) 'rolname'  => ['required', 'string', 'max:20'],
+2) 'rolname' => $request->rolname,
 
 public function store(Request $request): RedirectResponse
     {
@@ -158,7 +162,7 @@ class Authenticate extends Middleware
 
 =========================================================================================
 
-Maak een controller aan met php artisan make:controller BeherenController --resource
+Maak een controller aan met php artisan make:controller TandartsController --resource
 Pas de index method aan:
 
 /**
@@ -166,8 +170,8 @@ Pas de index method aan:
 */
 public function index()
 {
-    return view('Beheren.index', [
-        'title' => 'Beheren Home'
+    return view('tandarts.index', [
+        'title' => 'Tandarts Home'
     ]);
 }
 
@@ -177,16 +181,16 @@ Route::get('/beheren', [BeherenController::class, 'index'])
             ->name('beheren.index');
 
 Maak een view aan:
-in de map resources/view/views/beheren het bestand index.blade.php
+in de map resources/views/Tandarts het bestand index.blade.php
 
 =======================================================================================
 
 
 Pas de route in web.php aan:
-Route::get('/beheren', [BeherenController::class, 'index'])
-            ->name('beheren.index')
+Route::get('/tandarts', [TandartsController::class, 'index'])
+            ->name('tandarts.index')
 
-Test in de browser door in te loggen als admin en dan in de url localhost:8000/beheren te zetten
+Test in de browser door in te loggen als Tandarts en dan in de url localhost:8000/beheren te zetten
 resultaat pagina is beheren is zichtbaar. Log in als andere rol-> resultaat niet zichtbaar 403 error
 
 ================================================================================================
