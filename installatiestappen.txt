@@ -1,0 +1,53 @@
+258155c2f2d8db00319c65e8370009466ebcd573 laatste commit
+
+laravel new breezedemo
+none (geen frontend framework)
+mysql (geen migrate)
+migrationfile aanpassen met rolname
+model aangepast met rolname
+
+composer require laravel/breeze --dev
+php artisan breeze:install blade
+php artisan migrate
+npm install
+npm run dev
+
+
+bij register.blade.php toevoegen
+
+<div class="mt-4">
+            <x-input-label for="rolname" :value="__('rolname')" />
+
+            <x-text-input id="rolname" class="block mt-1 w-full"
+                            type="text"
+                            name="rolname" required autocomplete="rolname" />
+
+            <x-input-error :messages="$errors->get('rolname')" class="mt-2" />
+        </div>
+
+
+
+app\Http\Controllers\Auth\RegisteredUserController.php uitbreiden met:
+
+public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'rolname'  => ['required', 'string', 'max:20'],
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'rolname' => $request->rolname,
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(route('dashboard', absolute: false));
+    }
